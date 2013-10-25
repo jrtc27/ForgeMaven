@@ -1,6 +1,7 @@
 package com.jrtc27.mojo.forgemaven;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,7 +50,7 @@ public class ProcessUtils {
 	 */
 	public static String getPythonProgramName() {
 		if (isWindows()) {
-			return "runtime/bin/python/python_mcp";
+			return "runtime" + File.separator + "bin" + File.separator + "python" + File.separator + "python_mcp.exe";
 		} else {
 			return "python";
 		}
