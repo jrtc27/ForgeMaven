@@ -48,9 +48,9 @@ public class ProcessUtils {
 	/**
 	 * Assuming running in MCP directory
 	 */
-	public static String getPythonProgramName() {
+	public static String getPythonProgramName(File mcpDirectory) {
 		if (isWindows()) {
-			return "runtime" + File.separator + "bin" + File.separator + "python" + File.separator + "python_mcp.exe";
+			return new File(mcpDirectory, "runtime" + File.separator + "bin" + File.separator + "python" + File.separator + "python_mcp.exe").getAbsolutePath();
 		} else {
 			return "python";
 		}

@@ -136,7 +136,7 @@ public class InitializeMojo extends AbstractMojo {
 		}
 
 		getLog().info("Running updatemd5.py");
-		List<String> command = Arrays.asList(ProcessUtils.getPythonProgramName(), "runtime/updatemd5.py", "-f");
+		List<String> command = Arrays.asList(ProcessUtils.getPythonProgramName(mcpDirectory), "runtime/updatemd5.py", "-f");
 		ProcessBuilder processBuilder = new ProcessBuilder(command);
 		processBuilder.directory(mcpDirectory);
 		try {
