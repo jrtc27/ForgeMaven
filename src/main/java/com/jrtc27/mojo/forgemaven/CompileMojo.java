@@ -52,7 +52,7 @@ public class CompileMojo extends AbstractMojo {
 		ProcessBuilder processBuilder;
 
 		getLog().info("Running recompile.py");
-		command = Arrays.asList("python", "runtime/recompile.py");
+		command = Arrays.asList(ProcessUtils.getPythonProgramName(), "runtime/recompile.py");
 		Collections.addAll(command, compileArgs);
 		processBuilder = new ProcessBuilder(command);
 		processBuilder.directory(mcpDirectory);
@@ -67,7 +67,7 @@ public class CompileMojo extends AbstractMojo {
 		}
 
 		getLog().info("Running reobfuscate.py");
-		command = Arrays.asList("python", "runtime/reobfuscate.py");
+		command = Arrays.asList(ProcessUtils.getPythonProgramName(), "runtime/reobfuscate.py");
 		Collections.addAll(command, reobfuscateArgs);
 		processBuilder = new ProcessBuilder(command);
 		processBuilder.directory(mcpDirectory);

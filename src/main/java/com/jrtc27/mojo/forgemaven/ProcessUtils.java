@@ -34,4 +34,24 @@ public class ProcessUtils {
 		new StreamGobbler(process.getInputStream(), log).start();
 		new StreamGobbler(process.getErrorStream(), log).start();
 	}
+
+	private static Boolean isWindows = null;
+
+	private static boolean isWindows() {
+		if (isWindows == null) {
+			isWindows = System.getProperty("os.name").startsWith("Windows");
+		}
+		return isWindows;
+	}
+
+	/**
+	 * Assuming running in MCP directory
+	 */
+	public static String getPythonProgramName() {
+		if (isWindows()) {
+			return "runtime/bin/python/python_mcp";
+		} else {
+			return "python";
+		}
+	}
 }
