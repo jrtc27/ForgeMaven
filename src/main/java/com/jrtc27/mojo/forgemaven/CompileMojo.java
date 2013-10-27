@@ -42,6 +42,9 @@ public class CompileMojo extends AbstractMojo {
 	@Parameter(property = "reobfuscateArgs")
 	private String[] reobfuscateArgs;
 
+    @Parameter(property = "libDirectory", defaultValue = "${basedir}/lib/")
+    private File libDirectory;
+
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		FileUtils.log = getLog();
@@ -50,6 +53,24 @@ public class CompileMojo extends AbstractMojo {
 		File mcpDirectory = new File(forgeDirectory, relativeMCPPath).getAbsoluteFile();
 		List<String> command;
 		ProcessBuilder processBuilder;
+
+        getLog().info("Copying source files into Forge workspace");
+        try {
+            FileUtils.copyContents(new File(project.getBuild().getSourceDirectory()), new File(mcpDirectory, "src" + File.separator + "minecraft"), false);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to copy relevant source files into the Forge workspace", e);
+        }
+
+        if (libDirectory != null) {
+            getLog().info("Copying library files into Forge workspace");
+            try {
+                FileUtils.copyContents(libDirectory, new File(mcpDirectory, "lib"), false);
+            } catch (IOException e) {
+                throw new MojoExecutionException("Failed to copy relevant source files into the Forge workspace", e);
+            }
+        } else {
+            getLog().info("No library files to copy");
+        }
 
 		getLog().info("Running recompile.py");
 		command = Arrays.asList(ProcessUtils.getPythonProgramName(mcpDirectory), "runtime/recompile.py");
