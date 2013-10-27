@@ -42,11 +42,8 @@ public class InitializeMojo extends AbstractMojo {
 	@Parameter(property = "forgeWorkspaceURL", required = true)
 	private URL forgeWorkspaceURL;
 
-	@Parameter(property = "libDirectory", defaultValue = "${basedir}/lib/")
-	private File libDirectory;
-
-	@Parameter(property = "relativeMCPPath", defaultValue = "mcp/")
-	private String relativeMCPPath;
+    @Parameter(property = "relativeMCPPath", defaultValue = "mcp/")
+    private String relativeMCPPath;
 
 	private void extractZip(File zipFile, File outputFolder) throws IOException {
 		byte[] buffer = new byte[1024];
@@ -112,21 +109,26 @@ public class InitializeMojo extends AbstractMojo {
 			throw new MojoExecutionException("Failed to clean Forge workspace", e);
 		}
 
-		getLog().info("Downloading " + forgeWorkspaceURL.toExternalForm());
-		try {
-			URLConnection connection = forgeWorkspaceURL.openConnection();
-			connection.addRequestProperty("User-Agent", "Mozilla/4.0");
-			BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
-			OutputStream out = new FileOutputStream(zipDestination);
-			byte data[] = new byte[1024];
-			int count;
-			while ((count = in.read(data, 0, 1024)) != -1) {
-				out.write(data, 0, count);
-			}
-			in.close();
-		} catch (Exception e) {
-			throw new MojoExecutionException("Failed to download Forge workspace", e);
-		}
+        if (zipDestination.exists()) {
+            getLog().info("Skipping download! File already exists!");
+            return;
+        } else {
+            getLog().info("Downloading " + forgeWorkspaceURL.toExternalForm());
+            try {
+                URLConnection connection = forgeWorkspaceURL.openConnection();
+                connection.addRequestProperty("User-Agent", "Mozilla/4.0");
+                BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
+                OutputStream out = new FileOutputStream(zipDestination);
+                byte data[] = new byte[1024];
+                int count;
+                while ((count = in.read(data, 0, 1024)) != -1) {
+                    out.write(data, 0, count);
+                }
+                in.close();
+            } catch (Exception e) {
+                throw new MojoExecutionException("Failed to download Forge workspace", e);
+            }
+        }
 
 		getLog().info("Extracting " + zipDestination.getAbsolutePath() + " to " + forgeDestination.getAbsolutePath());
 		try {
@@ -146,24 +148,6 @@ public class InitializeMojo extends AbstractMojo {
 			if (code != 0) throw new RuntimeException("Non-zero exit code " + code);
 		} catch (Exception e) {
 			throw new MojoExecutionException("Failed to run updatemd5 script", e);
-		}
-
-		getLog().info("Copying source files into Forge workspace");
-		try {
-			FileUtils.copyContents(new File(project.getBuild().getSourceDirectory()), new File(mcpDirectory, "src" + File.separator + "minecraft"), false);
-		} catch (IOException e) {
-			throw new MojoExecutionException("Failed to copy relevant source files into the Forge workspace", e);
-		}
-
-		if (libDirectory != null) {
-			getLog().info("Copying library files into Forge workspace");
-			try {
-				FileUtils.copyContents(libDirectory, new File(mcpDirectory, "lib"), false);
-			} catch (IOException e) {
-				throw new MojoExecutionException("Failed to copy relevant source files into the Forge workspace", e);
-			}
-		} else {
-			getLog().info("No library files to copy");
 		}
 	}
 }
