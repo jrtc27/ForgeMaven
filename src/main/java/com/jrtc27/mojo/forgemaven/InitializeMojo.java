@@ -42,9 +42,6 @@ public class InitializeMojo extends AbstractMojo {
 	@Parameter(property = "forgeWorkspaceURL", required = true)
 	private URL forgeWorkspaceURL;
 
-	@Parameter(property = "libDirectory", defaultValue = "${basedir}/lib/")
-	private File libDirectory;
-
 	@Parameter(property = "relativeMCPPath", defaultValue = "mcp/")
 	private String relativeMCPPath;
 
@@ -146,24 +143,6 @@ public class InitializeMojo extends AbstractMojo {
 			if (code != 0) throw new RuntimeException("Non-zero exit code " + code);
 		} catch (Exception e) {
 			throw new MojoExecutionException("Failed to run updatemd5 script", e);
-		}
-
-		getLog().info("Copying source files into Forge workspace");
-		try {
-			FileUtils.copyContents(new File(project.getBuild().getSourceDirectory()), new File(mcpDirectory, "src" + File.separator + "minecraft"), false);
-		} catch (IOException e) {
-			throw new MojoExecutionException("Failed to copy relevant source files into the Forge workspace", e);
-		}
-
-		if (libDirectory != null) {
-			getLog().info("Copying library files into Forge workspace");
-			try {
-				FileUtils.copyContents(libDirectory, new File(mcpDirectory, "lib"), false);
-			} catch (IOException e) {
-				throw new MojoExecutionException("Failed to copy relevant source files into the Forge workspace", e);
-			}
-		} else {
-			getLog().info("No library files to copy");
 		}
 	}
 }
